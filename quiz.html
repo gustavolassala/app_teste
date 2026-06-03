@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz do Mico</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #bfe8f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      width: 86%;
+      max-width: 430px;
+      background: #f4f4f4;
+      border-radius: 14px;
+      padding: 22px 18px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #ff7619;
+      font-size: 24px;
+      line-height: 1.05;
+      margin: 0 0 20px;
+    }
+
+    .option {
+      width: 100%;
+      border: none;
+      background: #ffba08;
+      color: white;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .letter {
+      background: white;
+      color: #ff8a00;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: bold;
+    }
+
+    .option:hover {
+      filter: brightness(0.96);
+    }
+
+    .feedback {
+      margin-top: 16px;
+      color: #ff7619;
+      font-size: 20px;
+      font-weight: bold;
+      min-height: 30px;
+    }
+
+    .result {
+      color: #333;
+      font-size: 18px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .code {
+      font-size: 34px;
+      color: #ff7619;
+      font-weight: bold;
+      text-align: center;
+      margin: 18px 0;
+    }
+
+    .restart {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      background: #ff7619;
+      color: white;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="card" id="app"></main>
+
+  <script>
+    const perguntas = [
+      {
+        texto: "O que o Mico descobriu no cipó?",
+        alternativas: [
+          { letra: "A", texto: "Um balanço novo", valor: 1 },
+          { letra: "B", texto: "Um cipó seco", valor: 2 },
+          { letra: "C", texto: "A Cléo, que é uma cobra!", valor: 4 }
+        ]
+      },
+      {
+        texto: "Como a Cléo se sentiu jogando futebol?",
+        alternativas: [
+          { letra: "A", texto: "Triste", valor: 8 },
+          { letra: "B", texto: "Brava", valor: 16 },
+          { letra: "C", texto: "Com sono", valor: 32 }
+        ]
+      },
+      {
+        texto: "Como podemos ajudar a Cléo a brincar?",
+        alternativas: [
+          { letra: "A", texto: "Mudando tudo nela", valor: 64 },
+          { letra: "B", texto: "Deixando ela ser do jeito dela", valor: 128 },
+          { letra: "C", texto: "Brincando só com quem é legal", valor: 256 }
+        ]
+      }
+    ];
+
+    let indice = 0;
+    let soma = 0;
+    let respostas = [];
+
+    const app = document.getElementById("app");
+
+    function mostrarPergunta() {
+      const pergunta = perguntas[indice];
+
+      app.innerHTML = `
+        <h1>${pergunta.texto}</h1>
+        ${pergunta.alternativas.map(alt => `
+          <button class="option" onclick="responder('${alt.letra}', ${alt.valor})">
+            <span class="letter">${alt.letra}</span>
+            <span>${alt.texto}</span>
+          </button>
+        `).join("")}
+        <div class="feedback" id="feedback"></div>
+      `;
+    }
+
+    function responder(letra, valor) {
+      soma += valor;
+      respostas.push(letra);
+
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = "Resposta registrada!";
+
+      setTimeout(() => {
+        indice++;
+        if (indice < perguntas.length) {
+          mostrarPergunta();
+        } else {
+          mostrarResultado();
+        }
+      }, 600);
+    }
+
+    function mostrarResultado() {
+      app.innerHTML = `
+        <h1>Resultado final</h1>
+        <div class="result">
+          <p><strong>Respostas selecionadas:</strong></p>
+          <p>Pergunta 1: ${respostas[0]}</p>
+          <p>Pergunta 2: ${respostas[1]}</p>
+          <p>Pergunta 3: ${respostas[2]}</p>
+          <p><strong>Código para anotação:</strong></p>
+          <div class="code">${soma}</div>
+          <p>Esse número permite recuperar a combinação das respostas depois.</p>
+        </div>
+        <button class="restart" onclick="reiniciar()">Reiniciar</button>
+      `;
+    }
+
+    function reiniciar() {
+      indice = 0;
+      soma = 0;
+      respostas = [];
+      mostrarPergunta();
+    }
+
+    mostrarPergunta();
+  </script>
+
+</body>
+</html>
